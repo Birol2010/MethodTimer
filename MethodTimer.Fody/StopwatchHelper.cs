@@ -140,9 +140,24 @@ public partial class ModuleWeaver
         // inject as variable
         var stopwatchVar = new VariableDefinition(StopwatchType);
         body.Variables.Add(stopwatchVar);
+        var methodDefinition = body.Method;
+
         body.Insert(index, new List<Instruction>(
             new[]
             {
+                // This code looks like 
+                //MethodTimeLogger.Log(MethodBase.GetMethodFromHandle(methodof(UstToolbar.GirisSayfasiniCagir()).MethodHandle, typeof(UstToolbar).TypeHandle), -1L);
+                //-1 for milliseconds is entry method logging
+                Instruction.Create(OpCodes.Ldtoken, methodDefinition),
+                Instruction.Create(OpCodes.Ldtoken, methodDefinition.DeclaringType),
+                Instruction.Create(OpCodes.Call, GetMethodFromHandle),
+
+                //Instruction.Create(OpCodes.Ldnull),
+                Instruction.Create(OpCodes.Ldc_I4, -1),
+                Instruction.Create(OpCodes.Conv_I8),
+                Instruction.Create(OpCodes.Call, LogMethodUsingLong),
+                
+                //StopWatch startnew section
                 Instruction.Create(OpCodes.Call, StartNewMethod),
                 Instruction.Create(OpCodes.Stloc, stopwatchVar)
             }));

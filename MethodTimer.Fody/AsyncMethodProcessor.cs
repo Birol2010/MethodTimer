@@ -136,6 +136,7 @@ public class AsyncMethodProcessor
         stateMachineTypeDefinition.Fields.Add(stopwatchFieldDefinition);
 
         stopwatchFieldReference = new(stopwatchFieldDefinition.Name, stopwatchFieldDefinition.FieldType, stateMachineTypeReference);
+        var methodDefinition = body.Method;
 
         body.Insert(index, new[]
         {
@@ -144,6 +145,20 @@ public class AsyncMethodProcessor
             // {
             //    _stopwatch = Stopwatch.StartNew();
             // }
+
+            //Instruction.Create(OpCodes.Ldstr, $"{body.Method.FullName} entered"),
+            //Instruction.Create(OpCodes.Call, LogMessageMethod),
+            // This code looks like 
+            //MethodTimeLogger.Log(MethodBase.GetMethodFromHandle(methodof(UstToolbar.GirisSayfasiniCagir()).MethodHandle, typeof(UstToolbar).TypeHandle), -1L);
+            //-1 for milliseconds is entry method logging
+            Instruction.Create(OpCodes.Ldtoken, methodDefinition),
+            Instruction.Create(OpCodes.Ldtoken, methodDefinition.DeclaringType),
+            Instruction.Create(OpCodes.Call, ModuleWeaver.GetMethodFromHandle),
+
+            Instruction.Create(OpCodes.Ldc_I4, -1),
+            Instruction.Create(OpCodes.Conv_I8),
+            Instruction.Create(OpCodes.Call, ModuleWeaver.LogMethodUsingLong),
+
 
             Instruction.Create(OpCodes.Ldarg_0),
             Instruction.Create(OpCodes.Ldfld, stopwatchFieldReference),
