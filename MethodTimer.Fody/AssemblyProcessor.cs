@@ -78,6 +78,7 @@ public partial class ModuleWeaver
             var format = timeAttribute.ConstructorArguments.FirstOrDefault().Value as string;
             if (!string.IsNullOrWhiteSpace(format))
             {
+                if (format == "return") return;
                 var hasErrors = false;
 
                 var logWithMessageMethodUsingLong = LogWithMessageMethodUsingLong;
