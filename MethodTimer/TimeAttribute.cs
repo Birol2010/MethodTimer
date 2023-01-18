@@ -10,6 +10,8 @@ namespace MethodTimer;
                 AttributeTargets.Module |
                 AttributeTargets.Class |
                 AttributeTargets.Method |
+                AttributeTargets.Delegate |
+                AttributeTargets.Event |
                 AttributeTargets.Constructor)]
 public class TimeAttribute :
     Attribute

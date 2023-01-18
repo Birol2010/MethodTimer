@@ -28,6 +28,7 @@ public partial class ModuleWeaver
 
             return;
         }
+        
 
         foreach (var type in types)
         {
@@ -60,6 +61,8 @@ public partial class ModuleWeaver
 
     void ProcessMethod(MethodDefinition method)
     {
+        if (method.IsGetter || method.IsSetter) return;
+        
         if (method.IsYield())
         {
             if (method.ContainsTimeAttribute())
